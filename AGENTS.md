@@ -17,14 +17,16 @@ Website development. Current implementation:
 - Public statistics, profile, contacts, and activity summaries reference BPS
   sources. Local content is not automatically synchronized with those sources.
 - Service links lead to existing official BPS channels.
-- DTSEN forms use shared Zod validation and an Axios service. Elysia CRUD endpoints
-  persist applications through Drizzle into Supabase PostgreSQL and store files
-  in private Supabase Storage. Access uses a browser-session bearer credential;
-  there are no applicant accounts or integration with official DTSEN decisions.
+- DTSEN forms use Zod validation and an Axios service for create only.
+  All APIs, database access, Storage, and application management belong to Satu
+  Portal. Its DTSEN create endpoint has not been implemented yet. Submission
+  stays disabled until `VITE_DTSEN_CREATE_URL` is configured. There are no
+  applicant accounts or integration with official DTSEN decisions.
 - The admin dashboard uses explicitly labeled sample records. Authentication and
   management of actual applications are not connected.
-- `app/api` contains the application CRUD backend, Drizzle migrations, Storage
-  setup, and tests. Live operation requires the environment described in README.md.
+- This repository contains only the frontend, directly at the project root.
+  The local API and workspace packages have been removed. Keep backend code,
+  database migrations, and private Storage in the separate Satu Portal project.
 
 Focus on:
 
@@ -46,22 +48,23 @@ require implementing those features.
 
 Follow the stack that exists in `README.md`:
 
-- Bun workspace
+- Bun single-package frontend project
 - Svelte + Vite
 - TypeScript
 - Tailwind CSS 4 via the Vite plugin
-- Shared BPS theme tokens in `app/web/src/app.css`
-- shadcn-svelte and Bits UI components in `app/web/src/lib/components/ui`
-- Elysia API, Drizzle ORM, Supabase PostgreSQL and private Storage
-- Shared Zod schemas in `packages/shared/src/desil.ts`
-- Frontend Axios service in `app/web/src/services/`
+- Shared BPS theme tokens in `src/app.css`
+- shadcn-svelte and Bits UI components in `src/lib/components/ui`
+- External Satu Portal API for DTSEN create; database and private Storage stay
+  in that backend
+- Zod schemas in `src/schemas/desil.ts`
+- Frontend Axios service in `src/services/`
 
 Do not migrate to SvelteKit or replace the installed UI or chart libraries unless that
 migration is explicitly requested. Do not add dependencies for work that can be
 handled with the current stack.
 
 Use Tailwind utilities for page and component styling. Keep shared theme tokens
-and reusable utilities in `app/web/src/app.css`.
+and reusable utilities in `src/app.css`.
 
 ## Website Scope
 
@@ -86,12 +89,12 @@ Each navigation item has a separate client-side route and page component.
 Centralize local content, data, and configuration in:
 
 ```text
-app/web/src/constants/
+src/constants/
 ```
 
 Do not scatter large datasets directly inside Svelte components.
 Keep data strongly typed.
-Keep frontend type definitions and component props in `app/web/src/types/`.
+Keep frontend type definitions and component props in `src/types/`.
 Mutable form state must use copies of constant templates.
 
 The existing `prototype.ts` filenames are legacy names, not the project phase.
@@ -114,7 +117,7 @@ The existing `prototype.ts` filenames are legacy names, not the project phase.
 
 ## Color System
 
-Use the current BPS palette from `app/web/src/app.css`:
+Use the current BPS palette from `src/app.css`:
 
 ```text
 Sky Blue  #2D95CA
@@ -165,13 +168,17 @@ Forms should have:
 For the current Perbaikan Data Desil implementation:
 
 - Keep form state, validation, files, and service calls in
-  `app/web/src/components/dtsen/form-dtsen.svelte`; the page owns layout only.
+  `src/components/dtsen/form-dtsen.svelte`; the page owns layout only.
 - Use shadcn controls with BPS theme tokens. Submit opens an AlertDialog
   confirmation before the API request; there is no separate review step.
 - Validate documents before submission, up to 5 MB per file.
 - Allow removing a selected file.
 - Validate PDF, JPG, JPEG, and PNG.
 - Confirm storage only after the API succeeds. Preserve form data on errors.
+- This website only calls create. Keep reads, updates, deletion, downloads, and
+  applicant management in Satu Portal. Do not generate browser-session bearer
+  credentials. Use the complete endpoint URL from `VITE_DTSEN_CREATE_URL` with
+  no fallback to a local API, and show an unavailable state when it is absent.
 - A database UUID identifies the stored application, not an official registration
   or acknowledgment by an officer. Storage does not change DTSEN decile decisions.
 - Require owner credentials for application reads, updates, deletion, and downloads.

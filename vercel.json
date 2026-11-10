@@ -1,35 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "bunVersion": "1.x",
-  "services": {
-    "api": {
-      "root": "app/api",
-      "framework": "elysia",
-      "outputDirectory": "dist"
-    },
-    "web": {
-      "root": "app/web",
-      "framework": "vite"
-    }
-  },
+  "framework": "vite",
+  "installCommand": "bun install --frozen-lockfile",
+  "buildCommand": "bun run build",
+  "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/api",
-      "destination": {
-        "service": "api"
-      }
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": {
-        "service": "api"
-      }
-    },
-    {
       "source": "/(.*)",
-      "destination": {
-        "service": "web"
-      }
+      "destination": "/index.html"
     }
   ]
 }

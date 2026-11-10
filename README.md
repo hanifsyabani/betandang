@@ -32,18 +32,19 @@ sesuai implementasi saat ini.
 - Indikator, profil, kontak, dan kegiatan publik merujuk sumber BPS yang
   dicantumkan pada halaman. Konten disimpan lokal dan tidak diperbarui otomatis.
 - Tautan layanan mengarah ke kanal resmi BPS yang sudah tersedia.
-- Form DTSEN memakai Zod, mengirim pengajuan melalui service Axios ke API Elysia,
-  dan menyimpan data di PostgreSQL Supabase melalui Drizzle. Dokumen disimpan
-  di bucket privat Supabase Storage. Tombol kirim membuka alert dialog konfirmasi,
-  tanpa tahap tinjauan. Pengajuan yang baru disimpan dapat diperbarui dan diunduh
-  dokumennya dari form; endpoint daftar dan hapus tetap tersedia melalui API.
+- Form DTSEN memakai Zod dan service Axios khusus create ke API Satu Portal.
+  Tombol kirim membuka AlertDialog konfirmasi, tanpa tahap tinjauan. Setelah
+  berhasil, form menampilkan ID penyimpanan dan pilihan membuat pengajuan baru.
+  API Satu Portal belum dibuat; pengiriman dinonaktifkan ketika URL endpoint
+  belum dikonfigurasi. Form ini tidak menyediakan baca, ubah, hapus, atau unduh
+  pengajuan. Database dan Storage menjadi tanggung jawab backend Satu Portal.
 - Dashboard admin masih memakai data contoh yang ditandai. Autentikasi dan
   pengelolaan pengajuan nyata belum terhubung.
 - Halaman `/login` menyediakan form email dan password tanpa pendaftaran.
   Form memvalidasi isian secara lokal dan menampilkan status autentikasi yang
   belum tersedia; form belum mengirim atau menyimpan kredensial.
 - Statistik per kecamatan menampilkan dashboard ECharts dari workbook lokal
-  `app/web/public/Data KCDA 2026.xlsx`. Semua 38 sheet tersedia pada 15 halaman
+  `public/Data KCDA 2026.xlsx`. Semua 38 sheet tersedia pada 15 halaman
   kecamatan, dilengkapi pencarian, filter topik, pilihan tabel/periode/indikator,
   tabel nilai, dan unduhan sumber. Daftar singkatan disajikan sebagai referensi;
   sheet 1.1 dan 1.2 mengikuti catatan sumber bahwa datanya tidak digunakan.
@@ -67,31 +68,47 @@ sesuai implementasi saat ini.
   kepadatan resmi yang telah diverifikasi. Kategori fasilitas tidak dijumlahkan
   karena desa dapat muncul di beberapa kategori; penanda kosong tetap kosong.
 - Halaman Kegiatan berisi satu kalender interaktif. Jadwal disimpan lokal di
-  `app/web/src/constants/activities.ts`, bersumber dari pengumuman BPS, dan
+  `src/constants/activities.ts`, bersumber dari pengumuman BPS, dan
   ditandai dengan cakupan nasional. Kalender memakai zona waktu Asia/Jakarta,
   navigasi bulan, pilihan tanggal, serta rincian sumber. Jadwal kunjungan khusus
   Musi Banyuasin belum tersedia dan tidak diasumsikan dari periode nasional.
-- API menyediakan CRUD pengajuan. Penyimpanan bukan persetujuan atau perubahan
-  desil DTSEN, dan belum terhubung ke sistem penetapan DTSEN atau petugas resmi.
+- Repository ini hanya berisi frontend di root proyek. Backend lokal sudah
+  dihapus; API, database, dan Storage dikelola terpisah oleh Satu Portal.
+  Penyimpanan bukan persetujuan atau perubahan desil DTSEN dan belum terhubung
+  ke sistem penetapan DTSEN atau petugas resmi.
 
 ## Stack Saat Ini
 
-- Bun workspace
+- Bun, satu paket frontend tanpa workspace
 - Svelte + Vite
 - TypeScript
 - Tailwind CSS 4 melalui plugin Vite, dengan theme token BPS
 - shadcn-svelte dan Bits UI untuk kontrol form serta dialog
-- Elysia, Drizzle ORM, PostgreSQL Supabase, dan Supabase Storage
-- Zod untuk validasi bersama; Axios untuk service API frontend
+- Zod untuk validasi frontend; Axios untuk service API Satu Portal
+- API, PostgreSQL Supabase, dan Storage dikelola terpisah oleh Satu Portal
 
 ## Struktur
 
 ```text
-app/
-  web/       Frontend website Svelte
-  api/       API Elysia, skema dan migrasi Drizzle, integrasi Storage
-packages/
-  shared/    Paket shared workspace
+public/              Aset statis, peta, sampul, dan workbook KCDA
+src/
+  components/        Komponen halaman dan form
+  constants/         Konten, data lokal, dan konfigurasi
+  lib/               Utilitas dan komponen UI shadcn-svelte
+  pages/             Halaman dengan routing di sisi klien
+  schemas/           Skema validasi Zod DTSEN
+  services/          Service Axios ke API Satu Portal
+  types/             Definisi tipe frontend
+  App.svelte         State routing dan layout utama
+  app.css            Token tema BPS dan utility bersama
+  main.ts            Entry frontend
+scripts/             Importir workbook KCDA
+tests/               Tes statistik, beranda, dan service DTSEN
+index.html           Entry HTML Vite
+package.json         Dependency dan perintah frontend
+tsconfig.json        Konfigurasi TypeScript
+vite.config.ts       Konfigurasi Vite
+vercel.json          Deployment frontend dan fallback route SPA
 ```
 
 ## Palette
@@ -106,7 +123,7 @@ Ink       #102033
 Base      #F8FAFC
 ```
 
-Token warna utama berada di blok `@theme` dalam `app/web/src/app.css`.
+Token warna utama berada di blok `@theme` dalam `src/app.css`.
 Halaman Statistik (termasuk rincian kecamatan), Kegiatan, dan form DTSEN
 memakai utility `orange-page` untuk latar hangat, aksen oranye, border krem,
 serta grafik dan peta dengan variasi warna oranye. Tema ini dibatasi pada
@@ -115,8 +132,8 @@ tetap memakai token status tersendiri agar hasilnya mudah dibedakan.
 Halaman dan komponen menggunakan utility Tailwind. Utility bersama untuk tombol,
 input, dan container juga didefinisikan dalam file tersebut.
 
-Tipe frontend berada di `app/web/src/types`. Konten, data lokal, navigasi, dan
-konfigurasi berada di `app/web/src/constants`. Nama file `prototype.ts` merupakan
+Tipe frontend berada di `src/types`. Konten, data lokal, navigasi, dan
+konfigurasi berada di `src/constants`. Nama file `prototype.ts` merupakan
 penamaan lama, bukan penanda status proyek saat ini. `App.svelte` mengelola route
 dan `components/layout/nav-bottom.svelte` menampilkan halaman yang aktif.
 Halaman admin tersedia pada `/admin-dashboard`.
@@ -124,7 +141,7 @@ Halaman admin tersedia pada `/admin-dashboard`.
 `components/dtsen/form-dtsen.svelte` memiliki state, validasi, dokumen, dan
 pemanggilan service form. `DesilRepairPage.svelte` hanya mengatur layout halaman.
 Komponen shadcn berada di `src/lib/components/ui`; alias `$lib` dan konfigurasi
-`components.json` mendukung penambahan komponen dengan CLI dari `app/web`.
+`components.json` mendukung penambahan komponen dengan CLI dari root proyek.
 Notifikasi global memakai Sonner melalui `Toaster` di `App.svelte`. Pemanggilan
 `showToast` yang sudah ada tetap tersedia dan kini menggunakan `svelte-sonner`.
 
@@ -132,22 +149,22 @@ Notifikasi global memakai Sonner melalui `Toaster` di `App.svelte`. Pemanggilan
 
 ### Memperbarui Data Dashboard Kecamatan
 
-Workbook sumber berada di `app/web/public/Data KCDA 2026.xlsx`. Dashboard memakai
-hasil ekstraksi per kecamatan dalam `app/web/src/constants/kcda/`, yang dimuat
-sesuai halaman. Importir juga menghasilkan `app/web/src/constants/kcda-overview.json`
+Workbook sumber berada di `public/Data KCDA 2026.xlsx`. Dashboard memakai
+hasil ekstraksi per kecamatan dalam `src/constants/kcda/`, yang dimuat
+sesuai halaman. Importir juga menghasilkan `src/constants/kcda-overview.json`
 untuk ringkasan umum, tanpa memuat seluruh tabel kecamatan di halaman peta.
 Data ringkas perbandingan untuk Chart umum dihasilkan sebagai
-`app/web/src/constants/kcda-general.json`; konfigurasi sorotannya berada di
-`app/web/src/constants/statistics-comparison.ts`.
-Konfigurasi tampilannya berada di `app/web/src/constants/statistics-overview.ts`.
+`src/constants/kcda-general.json`; konfigurasi sorotannya berada di
+`src/constants/statistics-comparison.ts`.
+Konfigurasi tampilannya berada di `src/constants/statistics-overview.ts`.
 Setelah mengganti atau memperbaiki workbook, jalankan importir
 sebelum build (Python 3, tanpa paket tambahan):
 
 ```bash
 python scripts/import-kcda.py
-bun test scripts/statistics.test.ts
-bun test scripts/statistics-comparison.test.ts
-bun test scripts/home.test.ts
+bun test tests/statistics.test.ts
+bun test tests/statistics-comparison.test.ts
+bun test tests/home.test.ts
 ```
 
 Importir mempertahankan periode, nilai nol, penanda kosong, dan sumber pada tiap
@@ -168,127 +185,92 @@ bahwa workbook ini merupakan publikasi resmi yang telah disahkan.
 
 ```bash
 bun install
-bun run dev:web
+bun run dev
 ```
 
 Web berjalan di `http://localhost:5173`.
 
-### API Dan Database
+### API DTSEN Satu Portal
 
-Konfigurasi server berada di `app/api/.env`; daftar variabel ada di
-`app/api/.env.example`. `DATABASE_URL` menggunakan connection pooler Supabase.
-Username pooler berbentuk `postgres.PROJECT_REF`; password dengan karakter
-khusus harus di-URL-encode. Drizzle menggunakan `prepare: false` untuk mode
-transaction pooler.
+Website ini hanya memanggil endpoint **POST create**. API Satu Portal belum
+dibuat. Kontrak berikut merupakan kontrak yang perlu diimplementasikan di sana,
+bukan keterangan layanan yang sudah aktif.
 
-Storage memerlukan `SUPABASE_URL` dan `SUPABASE_SECRET_KEY`, atau legacy
-`SUPABASE_SERVICE_ROLE_KEY`. Kunci publishable tidak digunakan untuk operasi
-Storage server. Semua kredensial tersebut hanya berada di paket API.
+Isi `VITE_DTSEN_CREATE_URL` di `.env.local` dengan **URL lengkap endpoint
+create** setelah API tersedia. Biarkan kosong selama endpoint belum dibuat;
+form menampilkan status belum tersedia dan menonaktifkan pengiriman.
+`VITE_API_BASE_URL` dan proxy backend lokal tidak lagi digunakan.
 
-```bash
-cd app/api
-bun run db:generate
-bun run db:migrate
-bun run storage:setup
-bun run dev
-```
+Variabel `VITE_*` bersifat publik. `DATABASE_URL`, kunci rahasia Supabase, dan
+konfigurasi Storage hanya berada di backend Satu Portal. Mengubah env database
+tidak membuat endpoint API secara otomatis. Konfigurasi frontend dibaca dari
+`.env.local` di root proyek.
 
-Bucket `desil-documents` bersifat privat, menerima PDF, JPEG, dan PNG hingga
-5 MB per dokumen. API memeriksa tipe, ekstensi, ukuran, dan signature file.
-Tautan unduhan diberikan setelah pemeriksaan akses dan berlaku 60 detik.
+#### Kontrak Create
 
-Frontend menggunakan `/api` melalui proxy Vite secara default. Untuk API di
-alamat lain, atur `VITE_API_BASE_URL` di `app/web/.env.local`, misalnya
-`http://localhost:3001/api`. Origin frontend harus termasuk dalam `CORS_ORIGIN`.
-Variabel `VITE_*` tidak boleh berisi kunci rahasia.
+Request memakai `multipart/form-data`; browser menetapkan boundary secara
+otomatis. Form publik tidak mengirim token admin, cookie login, atau bearer
+credential sesi lama.
 
-### Endpoint Desil
+| Kolom | Isi |
+| --- | --- |
+| `id` | UUID acak untuk identitas penyimpanan dan pengiriman ulang |
+| `nama` | Nama lengkap, 3–160 karakter |
+| `desa` | Desa/kelurahan, 1–160 karakter |
+| `kecamatan` | Salah satu kecamatan pada `DESIL_KECAMATAN` |
+| `surat` | Dokumen surat keterangan |
+| `identitas` | Dokumen identitas |
+| `domisili` | Dokumen pendukung domisili |
 
-Semua endpoint memakai `Authorization: Bearer <token-sesi>`. Service frontend
-membuat token acak 256 bit dan menyimpannya di `sessionStorage`; database hanya
-menyimpan hash SHA-256. Pengajuan hanya dapat diakses oleh pemegang token yang
-membuatnya. Token merupakan kredensial akses sesi, bukan akun Supabase Auth.
-Menutup sesi browser dapat menghilangkan akses riwayat. Jangan membagikan token.
-RLS aktif tanpa policy publik sehingga Data API Supabase tidak membuka data warga.
+Tiga file wajib berupa PDF, JPG/JPEG, atau PNG, tidak kosong, maksimal 5 MB per
+file. Skema request ada pada `desilCreateSchema` di
+`src/schemas/desil.ts`. API harus memvalidasi ulang semua isian, ukuran,
+ekstensi, MIME, dan signature file di server.
 
-| Metode | Endpoint | Perilaku |
-| --- | --- | --- |
-| POST | `/api/desil` | Buat pengajuan dan unggah tiga dokumen |
-| GET | `/api/desil` | Daftar milik sesi, dengan `page`, `pageSize`, `search`, `status` |
-| GET | `/api/desil/:id` | Detail pengajuan milik sesi |
-| PATCH | `/api/desil/:id` | Ubah isian atau ganti dokumen |
-| DELETE | `/api/desil/:id` | Hapus pengajuan dan dokumen di Storage |
-| GET | `/api/desil/:id/documents/:kind` | Tautan unduhan privat; kind `surat`, `identitas`, `domisili` |
+Respons berhasil: HTTP 201 (baru) atau 200 (pengiriman ulang), berisi objek
+`{ data: { id, createdAt } }`. `id` adalah UUID pengajuan yang tersimpan dan
+`createdAt` adalah waktu ISO 8601 UTC. Respons hanya boleh menyatakan berhasil
+setelah data dan ketiga dokumen tersimpan. Frontend memvalidasi respons dengan
+`desilCreateResponseSchema`; respons tanpa bukti penyimpanan tidak menampilkan
+pesan berhasil.
 
-POST dan PATCH menerima multipart form data. POST memerlukan UUID `id`,
-`nama`, `desa`, `kecamatan`, serta
-file `surat`, `identitas`, `domisili`. PATCH hanya menerima kolom tersebut tanpa
-`id`; dokumen lama dipertahankan jika tidak diganti. `id` yang sama dapat dikirim
-ulang setelah timeout tanpa membuat pengajuan ganda. Status tidak dapat diubah
-oleh pemohon. Update/hapus pemohon dibatasi pada status Menunggu atau Perlu Perbaikan.
+Respons gagal memakai HTTP 4xx/5xx dan `{ message, fieldErrors? }`.
+`fieldErrors` memetakan nama kolom ke daftar pesan string, misalnya kolom `surat`
+untuk file yang ditolak. Form mempertahankan isian dan berkas saat gagal.
+ID request dipertahankan saat pengiriman ulang tanpa perubahan isian; API perlu
+menjamin idempotensi agar timeout tidak menyebabkan pengajuan ganda. UUID ini
+bukan kredensial untuk membaca atau mengelola pengajuan.
 
-`DESIL_ADMIN_TOKEN` bersifat opsional, hanya untuk akses API administratif, dengan
-format 64 digit hex. Jangan memasukkannya ke frontend. Dashboard admin tetap
-memakai data contoh sampai alur login dan otorisasi petugas diimplementasikan.
+Satu Portal bertanggung jawab atas CORS untuk origin website, pembatasan
+penyalahgunaan endpoint publik, database, Storage privat, serta autentikasi dan
+otorisasi semua akses baca/ubah/hapus/unduh. Jangan membuka akses publik ke data
+pemohon. Implementasi backend berada di proyek Satu Portal yang terpisah.
 
-```bash
-cd app/api
-bun test
-# Pengujian integrasi memakai data latihan dan membersihkannya setelah selesai.
-# PowerShell:
-$env:RUN_DESIL_INTEGRATION = "1"
-bun test tests/desil.integration.test.ts
-```
+### Pemeriksaan
 
 ```bash
-bun run build
+bun run test
+bun run test:desil
 bun run typecheck
+bun run build
 ```
+
+Tes create memakai respons tiruan; tes ini tidak menulis ke database atau
+Storage. Integrasi langsung baru dapat diverifikasi setelah API Satu Portal ada.
 
 ### Deployment Vercel
 
-Deploy dari root repository dengan konfigurasi Services di `vercel.json`.
-Service `web` memakai Vite dan service `api` memakai Elysia. Route `/api` dan
-`/api/*` diarahkan ke API; `/api/health` dapat diperiksa tanpa akses database.
-Service API memakai output `dist`, sehingga Vercel menjalankan `dist/index.js`
-yang sudah menyertakan kode workspace `@bps/shared`. Menjalankan entrypoint
-`src/index.ts` secara langsung di function dapat menyebabkan
-`ERR_MODULE_NOT_FOUND` jika sumber TypeScript workspace tidak ikut dikemas.
+Konfigurasi `vercel.json` membangun frontend Vite dari root proyek dan memakai
+output `dist/`. Fallback ke `index.html` mendukung akses langsung ke route SPA.
+Konfigurasi route mengikuti [panduan Vite di Vercel](https://vercel.com/docs/frameworks/frontend/vite#using-vite-to-make-spas).
+Gunakan root repository sebagai Root Directory di pengaturan project Vercel.
+Perintah `dev`, `build`, `preview`, `typecheck`, dan `test` dijalankan dari root.
+Gunakan Bun 1.4 atau lebih baru untuk format lockfile saat ini.
 
-Runtime memakai `bunVersion: "1.x"` (saat ini Bun 1.3.14 di Vercel).
-Format `bun.lock` versi 2 tetap memerlukan Bun 1.4 untuk instalasi dan build
-di Vercel. Build API mengecualikan Elysia dengan `--external=elysia`; paket ini
-dimuat dari dependency saat runtime. Ini menghindari regresi bundler Bun 1.4.1
-yang dapat menghasilkan deklarasi `Check2` bertabrakan saat membundel Elysia.
-Regresi tersebut diperbaiki pada [Bun 1.4.2](https://bun.com/blog/bun-v1.4.2).
-Build API juga mengimpor bundle yang dihasilkan agar kegagalan parsing atau
-startup terdeteksi saat build.
-
-Konfigurasikan variabel server dari `app/api/.env.example` pada environment
-deployment Vercel. Setelah perubahan kode, runtime, atau environment variable,
-buat deployment baru. Jika function gagal, periksa Runtime Logs untuk request
-`/api/health`; `FUNCTION_INVOCATION_FAILED` saja tidak menunjukkan penyebabnya.
-
-#### API Sebagai Project Terpisah
-
-Untuk frontend dan API pada dua project Vercel, konfigurasi API berada di
-`app/api/vercel.json`. Atur Root Directory project API ke `app/api`, dengan
-Framework Preset Elysia, Build Command `bun run build`, dan Output Directory
-`dist`. Aktifkan **Include source files outside of the Root Directory in the
-Build Step** agar build dapat mengakses `packages/shared` dan lockfile workspace.
-Pengaturan build dan runtime pada `vercel.json` di root repository hanya berlaku
-untuk deployment dari root; konfigurasi API ini berlaku untuk project terpisah.
-
-Pada project frontend, atur `VITE_API_BASE_URL` ke URL API yang berakhiran `/api`,
-misalnya `https://pojok-bps-muba-j54g.vercel.app/api`. Pada project API, atur
-`CORS_ORIGIN` ke daftar origin frontend, dipisahkan koma tanpa path atau garis
-miring penutup, misalnya
-`http://localhost:5173,https://pojok-bps-muba.vercel.app`.
-
-Setelah push, deploy ulang project API. Pemeriksaan awal yang diharapkan adalah
-`GET /api/health` mengembalikan 200 dan `OPTIONS /api/desil` dari origin frontend
-yang diizinkan mengembalikan 204 dengan header `Access-Control-Allow-Origin`
-sesuai origin tersebut. CORS tidak dapat berjalan jika function gagal startup.
+Set `VITE_DTSEN_CREATE_URL` pada environment project frontend setelah API siap,
+lalu build/deploy ulang karena Vite membaca env saat build. Backend Satu Portal
+dideploy dan dikonfigurasi terpisah; tidak ada service API lokal dalam deployment
+website ini. Dashboard admin lokal tetap memakai data contoh.
 
 ## Sumber Konten
 
@@ -297,8 +279,8 @@ Publikasi pilihan Beranda dan sampulnya diperiksa pada 27 Oktober 2026:
 [Statistik Daerah Kabupaten Musi Banyuasin 2025](https://musibanyuasinkab.bps.go.id/id/publication/2025/09/30/0be1ebbaa8f19df66ba1bc3f/statistik-daerah-kabupaten-musi-banyuasin-2025.html), dan
 [Statistik Kesejahteraan Rakyat Kabupaten Musi Banyuasin 2025](https://musibanyuasinkab.bps.go.id/id/publication/2025/11/28/b8e08bbb3f2c400b0d0628b4/statistik-kesejahteraan-rakyat-kabupaten-musi-banyuasin-2025.html).
 Sampul asli dari metadata `og:image` halaman tersebut disimpan lokal dalam
-`app/web/public/publications/`. Konfigurasi Beranda berada di
-`app/web/src/constants/home.ts`.
+`public/publications/`. Konfigurasi Beranda berada di
+`src/constants/home.ts`.
 
 Konten diperiksa pada 11 Oktober 2026. Periode statistik mengikuti masing-masing
 indikator, bukan tahun pemeriksaan konten.
@@ -341,7 +323,9 @@ Pojok BPS Muba adalah website informasi statistik dan layanan untuk BPS Kabupate
 Musi Banyuasin. Proyek sudah masuk tahap pengembangan website. Gunakan konten
 institusional yang relevan bagi pengguna dan sumber BPS yang terverifikasi.
 Pertahankan Bun, Svelte + Vite, TypeScript, Tailwind CSS 4, serta tema yang tersedia.
-Frontend dan API CRUD pengajuan sudah terhubung dengan Supabase setelah konfigurasi
-dan migrasi diterapkan. Dashboard admin masih memakai data contoh dan penetapan
-desil DTSEN tidak diotomatisasi. Pesan antarmuka harus mencerminkan kondisi
-tersebut. Baca `AGENTS.md` sebelum membuat perubahan.
+Frontend DTSEN hanya memanggil API create Satu Portal. Endpoint tersebut belum
+dibuat; pengiriman dinonaktifkan selama URL belum dikonfigurasi. Repository ini
+hanya memuat frontend, tanpa backend lokal atau paket workspace. Dashboard admin
+masih memakai data contoh dan penetapan desil DTSEN tidak diotomatisasi. Pesan
+antarmuka harus mencerminkan kondisi tersebut. Baca `AGENTS.md` sebelum membuat
+perubahan.

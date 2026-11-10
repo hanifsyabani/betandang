@@ -13,8 +13,8 @@ from pathlib import Path
 from zipfile import ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "app/web/public/Data KCDA 2026.xlsx"
-OUTPUT = ROOT / "app/web/src/constants/kcda"
+SOURCE = ROOT / "public/Data KCDA 2026.xlsx"
+OUTPUT = ROOT / "src/constants/kcda"
 NS = {"s": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 DISTRICTS = dict(zip(
     ["010", "020", "021", "022", "023", "030", "031", "040", "041", "090", "091", "092", "100", "101", "102"],
