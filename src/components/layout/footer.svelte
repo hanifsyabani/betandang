@@ -9,11 +9,9 @@
 
 <footer class="bg-ink text-portal-body">
   <div class="border-b border-inverse/15" aria-hidden="true">
-    <div class="page-container flex items-center justify-center gap-5 py-10 opacity-20 sm:gap-7 md:py-12 lg:gap-10 lg:py-16">
-      <img src="/logo.png" alt="" class="w-16 shrink-0 brightness-0 invert sm:w-24 lg:w-36" width="661" height="512" />
-      <p class="min-w-0 text-[2rem] leading-[1.1] font-bold text-inverse sm:text-5xl lg:text-[4.5rem] xl:text-[5.25rem]">
-        Betandang
-      </p>
+    <div class="page-container flex items-center justify-center gap-2 opacity-20 sm:gap-7 md:py-12 lg:gap-10 ">
+      <img src="/logo.png" alt="" class="w-32 shrink-0 brightness-0 invert sm:w-24 lg:w-60"  />
+    
     </div>
   </div>
 

@@ -67,6 +67,7 @@ export type PortalTopic = {
   x: number;
   y: number;
   path: string;
+  external?: boolean;
 };
 
 export type ProfileHighlight = {

@@ -22,6 +22,9 @@ sesuai implementasi saat ini.
 ## Kondisi Implementasi
 
 - Frontend menggunakan Svelte dan routing di sisi klien.
+- Jaringan portal Beranda menyediakan akses Statistik & Data, form DTSEN, dan
+  kalender Kegiatan, serta tautan PST, Publikasi BPS, dan Pengaduan dari kanal
+  yang sudah dicantumkan di proyek. Tautan eksternal membuka tab baru.
 - Beranda setelah jumbotron menampilkan Sekilas Musi Banyuasin, sorotan lima
   kecamatan dengan pilihan indikator, peta ringkas interaktif beserta pilihan
   kecamatan, akses layanan, tiga publikasi pilihan, dan ringkasan agenda.

@@ -57,14 +57,12 @@ export const quickStatistics: StatisticCard[] = [
 export const portalNetworkCenter = { x: 450, y: 168 };
 
 export const portalTopics: PortalTopic[] = [
-  { label: "Kependudukan", icon: "users-round", helper: "Data sosial", tone: "sky", x: 120, y: 128, path: "/statistik-data" },
-  { label: "Kemiskinan", icon: "hand-coins", helper: "Indikator sosial", tone: "orange", x: 280, y: 62, path: "/statistik-data" },
-  { label: "Ekonomi", icon: "chart-no-axes-combined", helper: "Tren daerah", tone: "green", x: 650, y: 66, path: "/statistik-data" },
-  { label: "Publikasi", icon: "book-open", helper: "Publikasi BPS", tone: "sky", x: 790, y: 136, path: "/layanan" },
-  { label: "DTSEN", icon: "file-text", helper: "Perbaikan desil", tone: "orange", x: 760, y: 226, path: "/perbaikan-data-desil" },
-  { label: "PST", icon: "database", helper: "Layanan data", tone: "green", x: 180, y: 224, path: "/layanan" },
-  { label: "Kegiatan", icon: "calendar-days", helper: "Berita kegiatan", tone: "sky", x: 355, y: 290, path: "/kegiatan" },
-  { label: "Admin", icon: "monitor", helper: "Kelola pengajuan", tone: "green", x: 575, y: 292, path: "/admin-dashboard" }
+  { label: "Statistik & Data", icon: "chart-no-axes-combined", helper: "Data per kecamatan", tone: "sky", x: 135, y: 62, path: "/statistik-data" },
+  { label: "PST BPS", icon: "database", helper: "Data & konsultasi", tone: "green", x: 765, y: 62, path: contentSources.pst, external: true },
+  { label: "DTSEN", icon: "file-text", helper: "Form perbaikan desil", tone: "orange", x: 135, y: 168, path: "/perbaikan-data-desil" },
+  { label: "Publikasi BPS", icon: "book-open", helper: "Katalog publikasi", tone: "sky", x: 765, y: 168, path: contentSources.publications, external: true },
+  { label: "Kegiatan", icon: "calendar-days", helper: "Kalender sensus & survei", tone: "sky", x: 135, y: 274, path: "/kegiatan" },
+  { label: "Pengaduan", icon: "file-text", helper: "Kanal pengaduan BPS", tone: "orange", x: 765, y: 274, path: contentSources.complaints, external: true },
 ];
 
 export const profileHighlights: ProfileHighlight[] = [
