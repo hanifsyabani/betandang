@@ -30,7 +30,7 @@ describe("DTSEN create Satu Portal, data latihan tanpa jaringan", () => {
   });
 
   test("hanya POST multipart ke URL lengkap tanpa credential admin/sesi", async () => {
-    const endpoint = "https://satu-portal.example.test/api/desil";
+    const endpoint = "https://project.example.test/functions/v1/dtsen-create";
     process.env.VITE_DTSEN_CREATE_URL = ` ${endpoint} `;
     let calls = 0;
     const adapter: AxiosAdapter = async (config) => {
@@ -53,6 +53,32 @@ describe("DTSEN create Satu Portal, data latihan tanpa jaringan", () => {
     expect(isDesilCreateConfigured()).toBe(true);
     expect(await createDesilSubmission(id, input, documents())).toEqual(receipt);
     expect(calls).toBe(1);
+  });
+
+  test("URL tidak lengkap atau tidak aman menonaktifkan pengiriman", async () => {
+    let calls = 0;
+    api.defaults.adapter = async () => { calls++; throw new Error("Tidak boleh mengirim"); };
+    for (const endpoint of ["/rest/v1/dtsen", "bukan-url", "http://project.example.test/functions/v1/dtsen-create", "https://user:secret@project.example.test/create", "https://project.example.test/create#fragment"]) {
+      process.env.VITE_DTSEN_CREATE_URL = endpoint;
+      expect(isDesilCreateConfigured()).toBe(false);
+      await expect(createDesilSubmission(id, input, documents())).rejects.toThrow("belum tersedia");
+    }
+    expect(calls).toBe(0);
+    process.env.VITE_DTSEN_CREATE_URL = "http://localhost:54321/functions/v1/dtsen-create";
+    expect(isDesilCreateConfigured()).toBe(true);
+  });
+
+  test("respons dengan ID pengajuan lain tidak dianggap berhasil", async () => {
+    process.env.VITE_DTSEN_CREATE_URL = "https://project.example.test/functions/v1/dtsen-create";
+    api.defaults.adapter = async (config) => ({
+      data: { data: { ...receipt, id: crypto.randomUUID() } }, status: 201, statusText: "Created", headers: {}, config
+    });
+    try {
+      await createDesilSubmission(id, input, documents());
+      throw new Error("ID berbeda harus ditolak");
+    } catch (error) {
+      expect(getApiErrorMessage(error)).toContain("belum mengonfirmasi penyimpanan");
+    }
   });
 
   test("validasi isian, file kosong/besar, dan format tidak sesuai sebelum request", async () => {

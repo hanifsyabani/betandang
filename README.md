@@ -38,8 +38,9 @@ sesuai implementasi saat ini.
 - Form DTSEN memakai Zod dan service Axios khusus create ke API Satu Portal.
   Tombol kirim membuka AlertDialog konfirmasi, tanpa tahap tinjauan. Setelah
   berhasil, form menampilkan ID penyimpanan dan pilihan membuat pengajuan baru.
-  API Satu Portal belum dibuat; pengiriman dinonaktifkan ketika URL endpoint
-  belum dikonfigurasi. Form ini tidak menyediakan baca, ubah, hapus, atau unduh
+  API create berjalan sebagai Supabase Edge Function `dtsen-create` yang dikelola
+  di repo Satu Portal; pengiriman dinonaktifkan ketika URL fungsi belum
+  dikonfigurasi. Form ini tidak menyediakan baca, ubah, hapus, atau unduh
   pengajuan. Database dan Storage menjadi tanggung jawab backend Satu Portal.
 - Dashboard admin masih memakai data contoh yang ditandai. Autentikasi dan
   pengelolaan pengajuan nyata belum terhubung.
@@ -195,12 +196,16 @@ Web berjalan di `http://localhost:5173`.
 
 ### API DTSEN Satu Portal
 
-Website ini hanya memanggil endpoint **POST create**. API Satu Portal belum
-dibuat. Kontrak berikut merupakan kontrak yang perlu diimplementasikan di sana,
-bukan keterangan layanan yang sudah aktif.
+Website ini hanya memanggil endpoint **POST create** Supabase Edge Function
+`dtsen-create`. Kode fungsi berada di
+`supabase/functions/dtsen-create/` pada repo Satu Portal. Tabel `dtsen`, akses
+database, dan bucket Storage privat `dtsen` tetap dikelola di backend tersebut.
+Betandang tidak memanggil tabel Supabase secara langsung dan tidak memerlukan
+kunci rahasia Supabase di frontend.
 
 Isi `VITE_DTSEN_CREATE_URL` di `.env.local` dengan **URL lengkap endpoint
-create** setelah API tersedia. Biarkan kosong selama endpoint belum dibuat;
+create**, misalnya `https://your-project.supabase.co/functions/v1/dtsen-create`.
+Biarkan kosong selama fungsi belum dideploy;
 form menampilkan status belum tersedia dan menonaktifkan pengiriman.
 `VITE_API_BASE_URL` dan proxy backend lokal tidak lagi digunakan.
 
@@ -244,10 +249,19 @@ ID request dipertahankan saat pengiriman ulang tanpa perubahan isian; API perlu
 menjamin idempotensi agar timeout tidak menyebabkan pengajuan ganda. UUID ini
 bukan kredensial untuk membaca atau mengelola pengajuan.
 
-Satu Portal bertanggung jawab atas CORS untuk origin website, pembatasan
-penyalahgunaan endpoint publik, database, Storage privat, serta autentikasi dan
-otorisasi semua akses baca/ubah/hapus/unduh. Jangan membuka akses publik ke data
-pemohon. Implementasi backend berada di proyek Satu Portal yang terpisah.
+Fungsi memvalidasi ulang isian serta ukuran, ekstensi, MIME, dan signature berkas.
+Bucket dibuat privat pada pengajuan valid pertama jika belum ada; bucket yang
+sudah publik ditolak. Fingerprint isian dan isi dokumen memverifikasi retry
+dengan UUID yang sama. Data berbeda dengan UUID yang sudah tersimpan ditolak
+dengan HTTP 409. Dokumen dari percobaan yang gagal dibersihkan jika aman;
+respons database yang belum pasti dikonfirmasi sebelum penghapusan apa pun.
+
+Origin frontend harus masuk secret `DTSEN_ALLOWED_ORIGINS` pada Edge Function.
+Fungsi membatasi 20 request per IP per menit pada setiap worker dan membatasi
+body saat dibaca. Pembatasan ini bukan kuota global antar-worker. Satu Portal
+tetap bertanggung jawab atas autentikasi dan otorisasi baca/ubah/hapus/unduh;
+fungsi publik ini hanya menyediakan create. Jangan membuka akses publik ke
+data pemohon atau menaruh kunci server pada variabel `VITE_*`.
 
 ### Pemeriksaan
 
@@ -258,8 +272,12 @@ bun run typecheck
 bun run build
 ```
 
-Tes create memakai respons tiruan; tes ini tidak menulis ke database atau
-Storage. Integrasi langsung baru dapat diverifikasi setelah API Satu Portal ada.
+Tes create di repo ini memakai respons tiruan dan tidak menulis ke database
+atau Storage. Pengujian langsung pada 12 November 2026 menggunakan service
+frontend ke fungsi yang dideploy: create 201, retry 200 dengan satu baris,
+tiga dokumen privat, dan penolakan akses anonim. Data latihan beserta dokumennya
+dihapus setelah pengujian. Tes fungsi terpisah tersedia melalui
+`bun run test:dtsen` di repo Satu Portal.
 
 ### Deployment Vercel
 
@@ -326,9 +344,10 @@ Pojok BPS Muba adalah website informasi statistik dan layanan untuk BPS Kabupate
 Musi Banyuasin. Proyek sudah masuk tahap pengembangan website. Gunakan konten
 institusional yang relevan bagi pengguna dan sumber BPS yang terverifikasi.
 Pertahankan Bun, Svelte + Vite, TypeScript, Tailwind CSS 4, serta tema yang tersedia.
-Frontend DTSEN hanya memanggil API create Satu Portal. Endpoint tersebut belum
-dibuat; pengiriman dinonaktifkan selama URL belum dikonfigurasi. Repository ini
-hanya memuat frontend, tanpa backend lokal atau paket workspace. Dashboard admin
+Frontend DTSEN hanya memanggil Supabase Edge Function `dtsen-create` yang
+dikelola Satu Portal; pengiriman dinonaktifkan selama URL lengkap fungsi belum
+dikonfigurasi. Repository ini hanya memuat frontend, tanpa backend lokal atau
+paket workspace. Dashboard admin
 masih memakai data contoh dan penetapan desil DTSEN tidak diotomatisasi. Pesan
 antarmuka harus mencerminkan kondisi tersebut. Baca `AGENTS.md` sebelum membuat
 perubahan.

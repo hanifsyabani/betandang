@@ -180,8 +180,6 @@
     <div class="grid scroll-mt-36 gap-3" role="status" tabindex="-1" bind:this={successPanel}>
       <h2 class="text-lg font-bold text-ink">Pengajuan berhasil disimpan</h2>
       <p class="text-sm text-body">Data pemohon dan dokumen pendukung berhasil disimpan pada layanan website.</p>
-      <p class="text-sm text-body">ID penyimpanan: <span class="font-semibold wrap-anywhere">{successSubmission.id}</span></p>
-      <p class="text-sm text-muted">Simpan ID ini sebagai referensi. ID penyimpanan bukan nomor registrasi resmi. Penyimpanan belum berarti persetujuan atau perubahan desil DTSEN.</p>
       <Button type="button" variant="outline" class="justify-self-start" onclick={resetForm}>Pengajuan baru</Button>
     </div>
   {:else}

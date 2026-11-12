@@ -19,8 +19,9 @@ Website development. Current implementation:
 - Service links lead to existing official BPS channels.
 - DTSEN forms use Zod validation and an Axios service for create only.
   All APIs, database access, Storage, and application management belong to Satu
-  Portal. Its DTSEN create endpoint has not been implemented yet. Submission
-  stays disabled until `VITE_DTSEN_CREATE_URL` is configured. There are no
+  Portal. DTSEN create runs as the Supabase Edge Function `dtsen-create`, whose
+  source is in the Satu Portal repository. Submission stays disabled until
+  `VITE_DTSEN_CREATE_URL` contains its complete URL. There are no
   applicant accounts or integration with official DTSEN decisions.
 - The admin dashboard uses explicitly labeled sample records. Authentication and
   management of actual applications are not connected.
