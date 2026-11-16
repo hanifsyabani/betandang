@@ -179,13 +179,12 @@
   {#if successSubmission}
     <div class="grid scroll-mt-36 gap-3" role="status" tabindex="-1" bind:this={successPanel}>
       <h2 class="text-lg font-bold text-ink">Pengajuan berhasil disimpan</h2>
-      <p class="text-sm text-body">Data pemohon dan dokumen pendukung berhasil disimpan pada layanan website.</p>
-      <Button type="button" variant="outline" class="justify-self-start" onclick={resetForm}>Pengajuan baru</Button>
+      <Button type="button" variant="outline" class="justify-self-start" onclick={resetForm}>Kembali</Button>
     </div>
   {:else}
   {#if !serviceConfigured}
     <p id="desil-service-unavailable" class="rounded-md bg-surface-strong p-3 text-sm text-body" role="status">
-      Pengiriman pengajuan belum tersedia. Formulir belum terhubung ke layanan penyimpanan.
+      Terjadi Kesalahan
     </p>
   {/if}
   <fieldset class="contents" disabled={formSubmitting}>
@@ -193,7 +192,7 @@
       class="flex flex-wrap items-center justify-between gap-2 border-b border-border-subtle pb-4"
     >
       <h2 class="text-[1rem] font-bold text-ink">
-        Informasi pemohon
+        Informasi
       </h2>
     </div>
 

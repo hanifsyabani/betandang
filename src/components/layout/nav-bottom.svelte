@@ -5,13 +5,14 @@
   import HomePage from "../../pages/HomePage.svelte";
   import KecamatanStatisticsPage from "../../pages/KecamatanStatisticsPage.svelte";
   import StatisticsPage from "../../pages/StatisticsPage.svelte";
+  import VisitorBookPage from "../../pages/VisitorBookPage.svelte";
   import { isKecamatanStatisticsPath } from "../../constants/maps";
   import type { NavBottomProps } from "../../types/components";
 
   let { currentPath, navigate, showToast }: NavBottomProps = $props();
 </script>
 
-<main class={["overflow-x-clip", (currentPath === "/statistik-data" || isKecamatanStatisticsPath(currentPath) || currentPath === "/perbaikan-data-desil" || currentPath === "/kegiatan") && "orange-page"]}>
+<main class={["overflow-x-clip", (currentPath === "/statistik-data" || isKecamatanStatisticsPath(currentPath) || currentPath === "/perbaikan-data-desil" || currentPath === "/buku-tamu" || currentPath === "/kegiatan") && "orange-page"]}>
   {#key currentPath}
 
     {#if currentPath === "/statistik-data"}
@@ -20,6 +21,8 @@
       <KecamatanStatisticsPage {currentPath} {navigate} />
     {:else if currentPath === "/perbaikan-data-desil"}
       <DesilRepairPage />
+    {:else if currentPath === "/buku-tamu"}
+      <VisitorBookPage />
     {:else if currentPath === "/kegiatan"}
       <ActivitiesPage />
     {:else if currentPath === "/admin-dashboard"}

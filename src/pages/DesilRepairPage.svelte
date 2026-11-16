@@ -6,7 +6,6 @@
 
 <HeaderPage
   title="Pengajuan Perbaikan Desil"
-  desc="Formulir pengajuan perbaikan desil"
 />
 
 <section class="bg-base py-12 md:py-16">
@@ -17,7 +16,7 @@
       class="rounded-lg border border-border-default bg-surface p-5 xl:sticky xl:top-32"
     >
       <h2 class="mb-2 text-[1rem] font-bold text-ink">
-        Alur pengajuan website
+        Alur pengajuan 
       </h2>
       <ol class="my-4 list-decimal space-y-2 pl-5">
         {#each desilProcessSteps as step}

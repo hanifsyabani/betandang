@@ -16,6 +16,7 @@ sesuai implementasi saat ini.
 - Statistik & Data: indikator daerah, tren, serta tautan publikasi dan tabel BPS.
 - Layanan: informasi kebutuhan layanan dan akses kanal pelayanan resmi.
 - Perbaikan Data Desil DTSEN: pengisian data pemohon dan pengiriman dokumen pengajuan.
+- Buku Tamu: pencatatan kunjungan, kontak, pekerjaan, keperluan, dan lampiran opsional.
 - Kegiatan: kalender periode sensus dan survei, rincian tanggal, serta rujukan BPS.
 - Admin Dashboard: pencarian, filter status, dan ringkasan pengajuan.
 
@@ -262,6 +263,23 @@ body saat dibaca. Pembatasan ini bukan kuota global antar-worker. Satu Portal
 tetap bertanggung jawab atas autentikasi dan otorisasi baca/ubah/hapus/unduh;
 fungsi publik ini hanya menyediakan create. Jangan membuka akses publik ke
 data pemohon atau menaruh kunci server pada variabel `VITE_*`.
+
+### API Buku Tamu Satu Portal
+
+Halaman `/buku-tamu` menggunakan form terpisah di
+`src/components/visitor-book/form-visitor-book.svelte`, validasi Zod, dan service
+Axios `src/services/visitor-book.ts`. Data dikirim sebagai multipart ke Edge
+Function `visitor-book-create` di Satu Portal. Nama, telepon, pekerjaan, dan
+keperluan wajib diisi; email dan lampiran opsional. Lampiran mengikuti batas
+PDF/JPG/JPEG/PNG maksimal 5 MB seperti form DTSEN.
+
+Set `VITE_VISITOR_BOOK_CREATE_URL` di `.env.local` atau environment build Vercel
+ke `https://<project-ref>.supabase.co/functions/v1/visitor-book-create`.
+Pengiriman dinonaktifkan jika URL belum tersedia. Form meminta konfirmasi,
+mempertahankan isian saat gagal, menggunakan UUID yang sama saat retry tanpa
+perubahan isian, dan menampilkan ID serta waktu catatan setelah API berhasil.
+Frontend hanya menyediakan create; tabel `visitor_book`, bucket privat `visitor`,
+dan pengelolaan data tetap di Satu Portal. Tidak ada kredensial admin di browser.
 
 ### Pemeriksaan
 
