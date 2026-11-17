@@ -7,6 +7,7 @@ export const navItems: PageRoute[] = [
   { path: "/", label: "Beranda" },
   { path: "/statistik-data", label: "Statistik & Data", shortLabel: "Statistik" },
   { path: "/perbaikan-data-desil", label: "Perbaikan DTSEN", shortLabel: "DTSEN" },
+  { path: "/buku-tamu", label: "Buku Tamu",  },
   { path: "/kegiatan", label: "Kegiatan" },
 ];
 
