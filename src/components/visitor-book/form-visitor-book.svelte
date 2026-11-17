@@ -13,7 +13,6 @@
   import type { VisitorBookForm, VisitorBookReceipt } from "../../types/visitor-book";
 
   const configured = isVisitorBookConfigured();
-  const date = new Intl.DateTimeFormat("id-ID", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Jakarta" });
   let form = $state<VisitorBookForm>({ ...emptyVisitorBookForm });
   let file = $state<File | undefined>();
   let fileInput = $state<HTMLInputElement | null>(null);

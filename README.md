@@ -23,6 +23,13 @@ sesuai implementasi saat ini.
 ## Kondisi Implementasi
 
 - Frontend menggunakan Svelte dan routing di sisi klien.
+- Animasi memakai API JavaScript dari `motion` melalui attachment Svelte:
+  transisi halaman, kemunculan konten saat digulir, serta respons hover/tekan
+  pada portal layanan dan tombol. Menu seluler memiliki transisi buka/tutup.
+  Gerakan mengikuti pengaturan `prefers-reduced-motion`, termasuk perubahan
+  pengaturan saat halaman terbuka; fokus keyboard langsung menampilkan konten.
+  Pencarian menggunakan dialog shadcn/Bits UI dengan fokus keyboard, penutupan
+  lewat Escape, serta transisi buka/tutup.
 - Jaringan portal Beranda menyediakan akses Statistik & Data, form DTSEN, dan
   kalender Kegiatan, serta tautan PST, Publikasi BPS, dan Pengaduan dari kanal
   yang sudah dicantumkan di proyek. Tautan eksternal membuka tab baru.

@@ -29,7 +29,7 @@ export type NavbarProps = PageActionProps & {
   searchDialogOpen?: boolean;
 };
 
-export type NavBottomProps = PageActionProps & {
+export type NavBottomProps = NavigationProps & {
   currentPath: string;
 };
 

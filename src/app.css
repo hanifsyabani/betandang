@@ -122,6 +122,12 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      transition-duration: 0s !important;
+    }
+
     html {
       @apply scroll-auto;
     }

@@ -18,6 +18,7 @@
   import { formatStatisticsValue } from "../lib/statistics";
   import type { StatisticsPageProps } from "../types/components";
   import HeaderPage from "../components/common/header-page.svelte";
+  import { reveal } from "../lib/motion.svelte";
 
   let { navigate }: StatisticsPageProps = $props();
   let search = $state("");
@@ -44,8 +45,9 @@
         aria-label="Ringkasan statistik Musi Banyuasin"
         class="grid min-w-0 grid-cols-2 gap-3 lg:col-span-2 lg:grid-cols-4 xl:col-span-1 xl:grid-cols-1 xl:gap-4"
       >
-        {#each statisticsOverviewCards as card (card.id)}
+        {#each statisticsOverviewCards as card, index (card.id)}
           <article
+            {@attach reveal(index * 0.06)}
             class="relative isolate flex min-w-0 flex-col gap-3 overflow-hidden rounded-xl border border-border-subtle bg-surface p-4 sm:flex-row sm:items-center sm:gap-4 sm:p-5 lg:flex-col lg:items-start xl:flex-row xl:items-center xl:px-5 xl:py-6"
           >
             <img

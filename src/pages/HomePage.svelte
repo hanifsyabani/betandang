@@ -3,6 +3,7 @@
   import HomeContent from "../components/home/home-content.svelte";
   import { portalTopics } from "../constants/prototype";
   import type { NavigationProps } from "../types/components";
+  import { reveal } from "../lib/motion.svelte";
 
   let { navigate }: NavigationProps = $props();
 </script>
@@ -20,8 +21,8 @@
   </div>
   <div class="page-container relative z-1 grid justify-items-center gap-8 lg:gap-5">
     <div class="w-full max-w-205 min-w-0 text-center">
-      <h1 class="text-balance text-4xl leading-[1.12] font-bold sm:text-5xl lg:text-6xl xl:text-7xl">Betan<span class="text-gambo-gold">dang</span></h1>
-      <p class="mx-auto mt-4 max-w-180 text-sm text-portal-body sm:text-base lg:text-lg">
+      <h1 {@attach reveal()} class="text-balance text-4xl leading-[1.12] font-bold sm:text-5xl lg:text-6xl xl:text-7xl">Betan<span class="text-gambo-gold">dang</span></h1>
+      <p {@attach reveal(0.08)} class="mx-auto mt-4 max-w-180 text-sm text-portal-body sm:text-base lg:text-lg">
         Beranda Terpadu Data dan Informasi Statistik
       </p>
       

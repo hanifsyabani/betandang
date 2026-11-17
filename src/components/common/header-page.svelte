@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { HeaderPageProps } from "../../types/components";
+  import { reveal } from "../../lib/motion.svelte";
 
   let { title, desc }: HeaderPageProps = $props();
 </script>
@@ -13,9 +14,9 @@
   </p>
 
   <div class="page-container relative z-10 flex min-h-52 flex-col items-center justify-center gap-3 py-10 text-center sm:min-h-60 sm:py-12 lg:min-h-64 lg:py-14">
-    <h1 class="max-w-full text-3xl leading-tight font-extrabold wrap-break-word text-balance text-ink sm:text-4xl lg:text-5xl xl:text-6xl">{title}</h1>
+    <h1 {@attach reveal()} class="max-w-full text-4xl leading-tight font-extrabold wrap-break-word text-balance text-ink lg:text-5xl xl:text-6xl">{title}</h1>
     {#if desc}
-      <p class="max-w-[65ch] text-sm leading-relaxed wrap-break-word text-balance text-body sm:text-[1rem]">{desc}</p>
+      <p {@attach reveal(0.08)} class="max-w-[65ch] text-sm leading-relaxed wrap-break-word text-balance text-body sm:text-[1rem]">{desc}</p>
     {/if}
   </div>
 </header>

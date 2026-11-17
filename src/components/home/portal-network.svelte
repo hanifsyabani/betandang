@@ -3,6 +3,7 @@
   import { toneClasses } from "../../constants/styles";
   import type { PortalNetworkProps } from "../../types/components";
   import type { PortalTopic } from "../../types/prototype";
+  import { interactive, reveal } from "../../lib/motion.svelte";
 
   let { topics, navigate }: PortalNetworkProps = $props();
 
@@ -23,7 +24,7 @@
   }
 </script>
 
-<nav class="relative grid mt-10 w-full max-w-205 grid-cols-1 gap-3 pt-2 min-[360px]:grid-cols-2 lg:block lg:aspect-900/340" aria-label="Layanan Pojok BPS Muba">
+<nav {@attach reveal(0.16)} class="relative grid mt-10 w-full max-w-205 grid-cols-1 gap-3 pt-2 min-[360px]:grid-cols-2 lg:block lg:aspect-900/340" aria-label="Layanan Pojok BPS Muba">
   <svg class="absolute inset-0 hidden size-full overflow-visible lg:block" viewBox="0 0 900 340" aria-hidden="true">
     {#each topics as topic}
       {@const end = linkEnd(topic)}
@@ -32,16 +33,17 @@
     {/each}
   </svg>
 
-  <a href="/statistik-data" class="relative col-span-full flex min-h-16 items-center justify-center gap-3 rounded-lg border border-bps-sky/60 bg-ink-soft px-4 py-2 text-inverse shadow-md hover:border-bps-sky hover:bg-ink-line lg:absolute lg:top-[49.4%] lg:left-1/2 lg:w-56 lg:-translate-x-1/2 lg:-translate-y-1/2" onclick={(event) => openRoute(event, "/statistik-data")}>
+  <a {@attach interactive(3)} href="/statistik-data" class="relative col-span-full flex min-h-16 items-center justify-center gap-3 rounded-lg border border-bps-sky/60 bg-ink-soft px-4 py-2 text-inverse shadow-md transition-colors hover:border-bps-sky hover:bg-ink-line lg:absolute lg:top-[49.4%] lg:left-1/2 lg:w-56 lg:-translate-x-1/2 lg:-translate-y-1/2" onclick={(event) => openRoute(event, "/statistik-data")}>
     <strong class="text-base font-bold">Tandang Peh</strong>
   </a>
 
   {#each topics as topic}
     <a
+      {@attach interactive(3)}
       href={topic.path}
       target={topic.external ? "_blank" : undefined}
       rel={topic.external ? "noopener noreferrer" : undefined}
-      class={["relative grid min-h-16 min-w-0 grid-cols-[32px_1fr] items-center gap-x-2.5 rounded-lg border border-transparent bg-ink-soft p-2.5 text-left text-inverse shadow-md hover:border-(--tone-color)/60 hover:bg-ink-line lg:absolute lg:top-(--node-y) lg:left-(--node-x) lg:min-h-14.5 lg:w-40.5 lg:-translate-x-1/2 lg:-translate-y-1/2", toneClasses[topic.tone]]}
+      class={["relative grid min-h-16 min-w-0 grid-cols-[32px_1fr] items-center gap-x-2.5 rounded-lg border border-transparent bg-ink-soft p-2.5 text-left text-inverse shadow-md transition-colors hover:border-(--tone-color)/60 hover:bg-ink-line lg:absolute lg:top-(--node-y) lg:left-(--node-x) lg:min-h-14.5 lg:w-40.5 lg:-translate-x-1/2 lg:-translate-y-1/2", toneClasses[topic.tone]]}
       style={`--node-x: ${(topic.x / 900) * 100}%; --node-y: ${(topic.y / 340) * 100}%`}
       onclick={topic.external ? undefined : (event) => openRoute(event, topic.path)}
     >

@@ -33,7 +33,7 @@
       history.pushState({}, "", nextPath);
       currentPath = nextPath;
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 
   function showToast(message: string) {
@@ -47,7 +47,7 @@
 
     const handlePopState = () => {
       currentPath = normalizePath(window.location.pathname);
-      window.scrollTo({ top: 0 });
+      window.scrollTo({ top: 0, behavior: "instant" });
     };
 
     const handleShortcut = (event: KeyboardEvent) => {
@@ -72,7 +72,7 @@
 
 <svelte:head>
   <title
-    >{isLoginPage ? "Masuk admin" : currentPath === "/admin-dashboard" ? "Dashboard Admin" : activePage.label}
+    >{isLoginPage ? "Masuk admin" : activePage.label}
     - Pojok BPS Muba</title
   >
   <meta
@@ -99,7 +99,7 @@
   />
 {/if}
 
-<NavBottom {currentPath} {navigate} {showToast} />
+<NavBottom {currentPath} {navigate} />
 
 {#if !isLoginPage}
   <Footer {navigate} />

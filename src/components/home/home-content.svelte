@@ -29,13 +29,13 @@
     scheduledActivities,
   } from "../../constants/activities";
   import { statisticsOverview } from "../../constants/statistics-overview";
-  import { kcdaWorkbookUrl } from "../../constants/statistics";
   import { contentSources } from "../../constants/prototype";
   import { toneClasses } from "../../constants/styles";
   import { formatStatisticsValue } from "../../lib/statistics";
   import { rankStatisticsComparison } from "../../lib/statistics-comparison";
   import { getHomeAgenda } from "../../lib/home";
   import type { NavigationProps } from "../../types/components";
+  import { interactive, reveal } from "../../lib/motion.svelte";
 
   let { navigate }: NavigationProps = $props();
   let metricId = $state("population");
@@ -116,8 +116,9 @@
         >
       </div>
       <div class="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
-        {#each homeOverviewCards as card (card.id)}
+        {#each homeOverviewCards as card, index (card.id)}
           <article
+            {@attach reveal(index * 0.06)}
             class="flex min-w-0 flex-col gap-3 rounded-xl border border-border-default/60 bg-surface p-4 sm:flex-row sm:gap-4 sm:p-5"
           >
             <div
@@ -149,6 +150,7 @@
 
     <div class="grid gap-5 lg:grid-cols-2">
       <section
+        {@attach reveal()}
         class="home-panel flex min-w-0 flex-col"
         aria-labelledby="home-spotlight-title"
       >
@@ -237,7 +239,7 @@
         >
       </section>
 
-      <section class="home-panel min-w-0" aria-labelledby="home-district-title">
+      <section {@attach reveal(0.06)} class="home-panel min-w-0" aria-labelledby="home-district-title">
         <div class="flex flex-wrap items-start justify-between gap-3">
           <div class="max-w-70">
             <h2
@@ -336,6 +338,7 @@
     </div>
 
     <section
+      {@attach reveal()}
       class="home-panel relative isolate overflow-hidden"
       aria-labelledby="home-services-title"
     >
@@ -355,6 +358,7 @@
       <div class="mt-5 grid gap-3 lg:grid-cols-3 lg:gap-4">
         {#each homeServices as service (service.id)}
           <a
+            {@attach interactive(3)}
             href={service.href}
             target={service.external ? "_blank" : undefined}
             rel={service.external ? "noopener noreferrer" : undefined}
@@ -398,142 +402,65 @@
       </div>
     </section>
 
-    <div class="grid gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-      <section
-        class="home-panel min-w-0"
-        aria-labelledby="home-publications-title"
-      >
-        <div class="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h2
-              id="home-publications-title"
-              class="text-lg font-bold text-ink sm:text-xl"
-            >
-              Publikasi Pilihan
-            </h2>
-          </div>
-          <a
-            class="inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-bps-orange-text hover:underline"
-            href={contentSources.publications}
-            target="_blank"
-            rel="noopener noreferrer"
-            >Semua publikasi <ArrowUpRight
-              class="size-3.5"
-              aria-hidden="true"
-            /><span class="sr-only">, membuka situs BPS di tab baru</span></a
+    <section {@attach reveal()} class="home-panel min-w-0" aria-labelledby="home-agenda-title">
+      <div class="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2
+            id="home-agenda-title"
+            class="text-lg font-bold text-ink sm:text-xl"
           >
+            Agenda Statistik
+          </h2>
         </div>
-        <div class="mt-5 grid gap-5 sm:grid-cols-3 sm:gap-4">
-          {#each homePublications as publication (publication.id)}
-            <article
-              class="flex min-w-0 items-start gap-3 sm:flex-col 2xl:flex-row"
-            >
-              <div
-                class="flex h-28 w-20 shrink-0 items-center justify-center rounded-sm bg-base"
-              >
-                {#if failedCovers.includes(publication.id)}<BookOpen
-                    class="size-8 text-muted"
-                    aria-hidden="true"
-                  />{:else}<img
-                    src={publication.cover}
-                    alt=""
-                    width="80"
-                    height="112"
-                    loading="lazy"
-                    onerror={() =>
-                      (failedCovers = [...failedCovers, publication.id])}
-                    class="h-full w-full object-contain shadow-sm"
-                  />{/if}
-              </div>
-              <div class="flex min-w-0 flex-1 flex-col items-start">
-                <h3 class="text-xs leading-relaxed font-semibold text-ink">
-                  {publication.title}
-                </h3>
-                <p class="mt-2 text-xs text-muted">
-                  Terbit <time datetime={publication.releaseDate}
-                    >{formatDate(publication.releaseDate)}</time
-                  >
-                </p>
-                <a
-                  class="home-link mt-3 px-3"
-                  href={publication.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Baca ${publication.title} di situs BPS, membuka tab baru`}
-                  >Baca publikasi <ArrowUpRight
-                    class="size-3.5"
-                    aria-hidden="true"
-                  /></a
-                >
-              </div>
-            </article>
-          {/each}
-        </div>
-      </section>
+        <a
+          class="inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-bps-orange-text hover:underline"
+          href="/kegiatan"
+          onclick={(event) => openRoute(event, "/kegiatan")}
+          >Lihat kalender <ArrowRight class="size-3.5" aria-hidden="true" /></a
+        >
+      </div>
 
-      <section class="home-panel min-w-0" aria-labelledby="home-agenda-title">
-        <div class="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h2
-              id="home-agenda-title"
-              class="text-lg font-bold text-ink sm:text-xl"
+      <ul class="mt-3 divide-y divide-border-subtle">
+        {#each visibleAgenda as activity (activity.id)}
+          <li class="py-3">
+            <a
+              href={activity.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group flex items-start gap-3 rounded-sm"
             >
-              Agenda Statistik
-            </h2>
-          </div>
-          <a
-            class="inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-bps-orange-text hover:underline"
-            href="/kegiatan"
-            onclick={(event) => openRoute(event, "/kegiatan")}
-            >Lihat kalender <ArrowRight
-              class="size-3.5"
-              aria-hidden="true"
-            /></a
-          >
-        </div>
-
-        <ul class="mt-3 divide-y divide-border-subtle">
-          {#each visibleAgenda as activity (activity.id)}
-            <li class="py-3">
-              <a
-                href={activity.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="group flex items-start gap-3 rounded-sm"
-              >
-                <CalendarDays
-                  class="mt-0.5 size-4 shrink-0 text-bps-orange-text"
-                  aria-hidden="true"
-                />
-                <span class="min-w-0 flex-1"
-                  ><strong
-                    class="block text-xs leading-relaxed font-semibold text-ink group-hover:text-bps-orange-text"
-                    >{activity.title}<span class="sr-only"
-                      >, buka sumber BPS di tab baru</span
-                    ></strong
-                  ><span class="mt-1 block text-xs leading-relaxed text-body"
-                    ><time datetime={activity.startDate}
-                      >{formatDate(activity.startDate)}</time
-                    >–<time datetime={activity.endDate}
-                      >{formatDate(activity.endDate)}</time
-                    ></span
-                  ><span class="mt-1 block text-xs text-muted"
-                    >{activity.scope} · {activity.endDate < currentDate
-                      ? "Selesai"
-                      : activity.startDate <= currentDate
-                        ? "Berlangsung"
-                        : "Mendatang"}</span
+              <CalendarDays
+                class="mt-0.5 size-4 shrink-0 text-bps-orange-text"
+                aria-hidden="true"
+              />
+              <span class="min-w-0 flex-1"
+                ><strong
+                  class="block text-xs leading-relaxed font-semibold text-ink group-hover:text-bps-orange-text"
+                  >{activity.title}<span class="sr-only"
+                    >, buka sumber BPS di tab baru</span
+                  ></strong
+                ><span class="mt-1 block text-xs leading-relaxed text-body"
+                  ><time datetime={activity.startDate}
+                    >{formatDate(activity.startDate)}</time
+                  >–<time datetime={activity.endDate}
+                    >{formatDate(activity.endDate)}</time
                   ></span
-                >
-                <span
-                  class="shrink-0 rounded-md bg-bps-orange-light px-2 py-1 text-xs font-medium text-bps-orange-text"
-                  >{activityCategories[activity.category].label}</span
-                >
-              </a>
-            </li>
-          {/each}
-        </ul>
-      </section>
-    </div>
+                ><span class="mt-1 block text-xs text-muted"
+                  >{activity.scope} · {activity.endDate < currentDate
+                    ? "Selesai"
+                    : activity.startDate <= currentDate
+                      ? "Berlangsung"
+                      : "Mendatang"}</span
+                ></span
+              >
+              <span
+                class="shrink-0 rounded-md bg-bps-orange-light px-2 py-1 text-xs font-medium text-bps-orange-text"
+                >{activityCategories[activity.category].label}</span
+              >
+            </a>
+          </li>
+        {/each}
+      </ul>
+    </section>
   </div>
 </div>
