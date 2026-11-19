@@ -10,6 +10,8 @@ import type {
   StatisticCard
 } from "../types/prototype";
 
+export const regencyName = "Kabupaten Musi Banyuasin";
+
 export const contentSources = {
   website: "https://musibanyuasinkab.bps.go.id/id",
   profile: "https://ppid.bps.go.id/app/konten/1606/Profil-BPS.html",
@@ -287,7 +289,7 @@ export const submissions: DesilSubmission[] = [
 ];
 
 export const officeInformation: OfficeInformation[] = [
-  { label: "Wilayah", value: "Kabupaten Musi Banyuasin, Sumatera Selatan" },
+  { label: "Wilayah", value: `${regencyName}, Sumatera Selatan` },
   { label: "Alamat", value: "Jalan Merdeka Lk. I, Kelurahan Serasan Jaya, Sekayu 30711" },
   { label: "Jam pelayanan PST", value: "Senin - Jumat, 08.00 - 15.30 WIB" },
   { label: "Telepon/Faks", value: "(0714) 321023" },

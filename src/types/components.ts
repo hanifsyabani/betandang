@@ -15,6 +15,7 @@ export type PageActionProps = NavigationProps & ToastProps;
 
 export type HeaderPageProps = {
   title: string;
+  eyebrow?: string;
   desc?: string;
 };
 

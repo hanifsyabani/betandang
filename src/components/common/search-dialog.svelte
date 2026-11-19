@@ -24,7 +24,7 @@
 
 <Dialog.Root bind:open>
     <Dialog.Content
-      class="top-20 max-h-[calc(100dvh_-_7rem)] -translate-y-0 gap-0 overflow-hidden border border-border-default bg-surface p-0 shadow-lg sm:max-w-160"
+      class="top-20 max-h-[calc(100dvh-7rem)] translate-y-0 gap-0 overflow-hidden border border-border-default bg-surface p-0 shadow-lg sm:max-w-160"
       showCloseButton={false}
     >
       <Dialog.Title class="sr-only">Pencarian Pojok BPS Muba</Dialog.Title>

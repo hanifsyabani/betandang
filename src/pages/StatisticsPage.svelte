@@ -15,6 +15,7 @@
     statisticsDistricts,
     statisticsOverviewCards,
   } from "../constants/statistics-overview";
+  import { regencyName } from "../constants/prototype";
   import { formatStatisticsValue } from "../lib/statistics";
   import type { StatisticsPageProps } from "../types/components";
   import HeaderPage from "../components/common/header-page.svelte";
@@ -32,7 +33,7 @@
   );
 </script>
 
-<HeaderPage title="Statistik" />
+<HeaderPage title="Statistik" eyebrow="BPS {regencyName}" />
 <section
   class="bg-home-base py-7 sm:py-9 lg:py-10"
   aria-labelledby="statistics-title"

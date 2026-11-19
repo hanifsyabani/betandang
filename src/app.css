@@ -213,11 +213,6 @@
   @apply max-w-[820px] text-4xl leading-[1.12] font-bold text-ink md:text-5xl xl:text-[3.5rem];
 }
 
-@utility page-header-outline {
-  color: transparent;
-  -webkit-text-stroke: 1.5px color-mix(in srgb, var(--color-bps-orange) 40%, transparent);
-}
-
 @utility section-heading {
   @apply text-2xl leading-[1.12] font-bold text-ink md:text-3xl xl:text-4xl;
 }
