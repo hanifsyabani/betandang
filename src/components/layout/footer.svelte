@@ -9,7 +9,7 @@
 
 <footer class="bg-ink text-portal-body">
   <div class="border-b border-inverse/15" aria-hidden="true">
-    <div class="page-container flex items-center justify-center gap-2 opacity-20 sm:gap-7 md:py-12 lg:gap-10 ">
+    <div class="page-container flex items-center justify-center gap-2 opacity-20 sm:gap-7 py-4 md:py-12 lg:gap-10 ">
       <img src="/logo.png" alt="" class="w-32 shrink-0 brightness-0 invert sm:w-24 lg:w-60"  />
     
     </div>
@@ -27,7 +27,7 @@
     </div>
 
     <nav aria-label="Navigasi footer">
-      <h2 class="mb-4 text-base font-semibold ">Navigasi</h2>
+      <h2 class="mb-4 text-base font-semibold hidden lg:block">Navigasi</h2>
       <ul class="grid gap-1 text-sm">
         {#each navItems as item}
           <li>
@@ -46,7 +46,7 @@
       </ul>
     </nav>
 
-    <nav class="border-t border-inverse/15 pt-8 md:border-t-0 md:border-l md:pt-0 md:pl-8 xl:pl-10" aria-label="Layanan footer">
+    <nav class="hidden lg:block border-t border-inverse/15 pt-8 md:border-t-0 md:border-l md:pt-0 md:pl-8 xl:pl-10" aria-label="Layanan footer">
       <h2 class="mb-4 text-base font-semibold ">Layanan</h2>
       <ul class="grid gap-1 text-sm">
         {#each footerExternalLinks as item}
@@ -78,7 +78,7 @@
       </ul>
     </nav>
 
-    <div class="border-t border-inverse/15 pt-8 md:border-t-0 md:border-l md:pt-0 md:pl-8 xl:pl-10">
+    <div class="border-t border-inverse/15 pt-8 hidden lg:block md:border-t-0 md:border-l md:pt-0 md:pl-8 xl:pl-10">
       <h2 class="mb-5 text-base font-semibold ">Kantor BPS Muba</h2>
       <address class="space-y-4 text-sm leading-7 not-italic">
         {#each footerContactInformation as information}
